@@ -1,0 +1,52 @@
+name: "Publish"
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  PROJECT_PATH: WTouch.Cli/WTouch.Cli.csproj
+  ZIP_PATH: WTouch.Cli/bin/Release/net6.0/win-x64/publish/WTouch.Cli.zip
+  EXE_PATH: WTouch.Cli/bin/Release/net6.0/win-x64/publish/touch.exe
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+    steps:
+      - name: Initialize Actions
+        uses: actions/checkout@v2
+
+      - name: Initialize .Net
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+
+      - name: Restore Project
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+      - name: Publish Project
+        run: dotnet publish ${{ env.PROJECT_PATH }} --config Release --framework net6.0 --runtime win-x86 --self-contained true --ready-to-run true --single-file true --include-native-libraries true --delete-existing-files
+
+      - name: Create Zip File
+        uses: papeloto/action-zip@v1
+        with:
+          files: ${{ env.EXE_PATH }}
+          dest: ${{ env.ZIP_PATH }}
+
+      - name: Initialize Release
+        uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+
+      - name: Create Release
+        uses: csexton/release-asset-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.ZIP_PATH }}
+          release-url: ${{ steps.create_release.outputs.upload_url }}
+          
