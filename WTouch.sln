@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTouch.Cli", "WTouch.Cli\WTouch.Cli.csproj", "{956C2E5C-03D5-46F9-B7E5-85FF3E19E2D3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "90. Documentation", "90. Documentation", "{AD346118-1BDA-42F0-86F1-5AC180FDE5E8}"
+	ProjectSection(SolutionItems) = preProject
+		readme.md = readme.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00. Aplication", "00. Aplication", "{A3A6044E-A167-48BB-9D14-9589174CE4FB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{956C2E5C-03D5-46F9-B7E5-85FF3E19E2D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{956C2E5C-03D5-46F9-B7E5-85FF3E19E2D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{956C2E5C-03D5-46F9-B7E5-85FF3E19E2D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{956C2E5C-03D5-46F9-B7E5-85FF3E19E2D3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{956C2E5C-03D5-46F9-B7E5-85FF3E19E2D3} = {A3A6044E-A167-48BB-9D14-9589174CE4FB}
+	EndGlobalSection
+EndGlobal
