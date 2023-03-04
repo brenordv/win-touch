@@ -11,6 +11,7 @@ env:
 
 jobs:
   build:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -32,7 +33,7 @@ jobs:
       - name: Create Release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v1.0.0
           release_name: Release v1.0.0
@@ -41,7 +42,7 @@ jobs:
       - name: Publish Release Artifact
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: WTouch.Cli/bin/Release/net6.0/win-x64/publish/
