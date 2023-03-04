@@ -11,39 +11,39 @@ env:
   EXE_PATH: ./WTouch.Cli/bin/Release/net6.0/win-x64/publish/touch.exe
 
 jobs:
-#  build:
-#    permissions:
-#      deployments: write
-#      contents: write
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#
-#      - name: Setup .NET
-#        uses: actions/setup-dotnet@v3
-#        with:
-#          dotnet-version: '6.0.x'
-#
-#      - name: Build
-#        run: dotnet build --configuration Release
-#
-#      - name: Where Am I?
-#        run: pwd
-#
-#      - name: Publish Project
-#        run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --framework net6.0 --runtime win-x64 --self-contained true /p:PublishSingleFile=true /p:DebugType=None
-#
-#      - name: Uploading artifact
-#        id: upload_artifact
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: "winTouch_${{ env.VERSION }}"
-#          path: ${{ env.EXE_PATH }}
-#          if-no-files-found: error
+  build:
+    permissions:
+      deployments: write
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Build
+        run: dotnet build --configuration Release
+
+      - name: Where Am I?
+        run: pwd
+
+      - name: Publish Project
+        run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --framework net6.0 --runtime win-x64 --self-contained true /p:PublishSingleFile=true /p:DebugType=None
+
+      - name: Uploading artifact
+        id: upload_artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: "winTouch_${{ env.VERSION }}"
+          path: ${{ env.EXE_PATH }}
+          if-no-files-found: error
 
   deploy:
-    #needs: build
+    needs: build
     permissions:
       deployments: write
       contents: write
@@ -73,66 +73,3 @@ jobs:
         with:
           files: "winTouch_${{ env.VERSION }}.zip"
           tag_name: v1.0.0
-#
-#
-#name: "Publish"
-#
-#on:
-#  push:
-#    branches:
-#      - master
-#
-#env:
-#  PROJECT_PATH: WTouch.Cli/WTouch.Cli.csproj
-#  ZIP_PATH: WTouch.Cli/bin/Release/net6.0/win-x64/publish/WTouch.Cli.zip
-#  EXE_PATH: WTouch.Cli/bin/Release/net6.0/win-x64/publish/touch.exe
-#
-#jobs:
-#  deploy:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#
-#      - name: Install .NET Core
-#        uses: actions/setup-dotnet@v3
-#        with:
-#          dotnet-version: 6.0.x
-#
-#      - name: Restore Project
-#        run: dotnet restore ${{ env.PROJECT_PATH }}
-#
-#      - name: Publish Project
-#        run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --framework net6.0 --runtime win-x86 --self-contained true
-#
-#      - name: Create Zip File
-#        uses: papeloto/action-zip@v1
-#        with:
-#          files: ${{ env.EXE_PATH }}
-#          dest: ${{ env.ZIP_PATH }}
-#
-#      - name: Bump version and push tag
-#        uses: mathieudutour/github-tag-action@v6.1
-#        
-#      - name: Release
-#        uses: softprops/action-gh-release@v1
-#        with:
-#          files: |
-#            ${{ env.ZIP_PATH }}            
-##
-#      - name: Initialize Release
-#        uses: actions/create-release@v1
-#        id: create_release
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.TOKEN }}
-#        with:
-#          tag_name: ${{ github.ref }}
-#          release_name: ${{ github.ref }}
-#
-#      - name: Create Release
-#        uses: csexton/release-asset-action@v2
-#        with:
-#          github-token: ${{ secrets.TOKEN }}
-#          file: ${{ env.ZIP_PATH }}
-#          release-url: ${{ steps.create_release.outputs.upload_url }}
-#          
