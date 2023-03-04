@@ -19,11 +19,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Get Version
-        id: get_version
         run: echo "version=$(cat WTouch.Cli/WTouch.Cli.csproj | grep -oP '(?<=<AssemblyVersion>).*(?=<\/AssemblyVersion>)')" >> $GITHUB_OUTPUT
   
   echo_version:
-    needs: get_version
+    needs: set_release_version
     runs-on: ubuntu-latest
     steps:
       - name: Echo Version
