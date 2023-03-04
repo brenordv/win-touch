@@ -7,8 +7,8 @@ on:
 env:
   VERSION: 1.0.0
   PROJECT_PATH: WTouch.Cli/WTouch.Cli.csproj
-  ZIP_PATH: WTouch.Cli/bin/Release/net6.0/win-x64/publish/WTouch.Cli.zip
-  EXE_PATH: WTouch.Cli/bin/Release/net6.0/win-x64/publish/touch.exe
+  ZIP_PATH: ./WTouch.Cli/bin/Release/net6.0/win-x64/publish/WTouch.Cli.zip
+  EXE_PATH: ./WTouch.Cli/bin/Release/net6.0/win-x64/publish/touch.exe
 
 jobs:
   build:
