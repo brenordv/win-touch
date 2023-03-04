@@ -33,14 +33,17 @@ jobs:
           files: ${{ env.EXE_PATH }}
           dest: ${{ env.ZIP_PATH }}
       - name: Create Release
-        uses: actions/create-release@v1
+        id: create_release
+#        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v1.0.0
-          release_name: Release v1.0.0
+          name: Release v1.0.0
           draft: false
           prerelease: false
+          files: ${{ env.ZIP_PATH }}
       - name: Publish Release Artifact
         uses: actions/upload-release-asset@v1
         env:
