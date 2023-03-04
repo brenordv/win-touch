@@ -14,11 +14,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Initialize Actions
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Initialize .Net
-        uses: actions/setup-dotnet@v1
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.x
 
@@ -34,19 +34,25 @@ jobs:
           files: ${{ env.EXE_PATH }}
           dest: ${{ env.ZIP_PATH }}
 
-      - name: Initialize Release
-        uses: actions/create-release@v1
-        id: create_release
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-
-      - name: Create Release
-        uses: csexton/release-asset-action@v2
-        with:
-          github-token: ${{ secrets.TOKEN }}
-          file: ${{ env.ZIP_PATH }}
-          release-url: ${{ steps.create_release.outputs.upload_url }}
-          
+          files: |
+            ${{ env.ZIP_PATH }}            
+#
+#      - name: Initialize Release
+#        uses: actions/create-release@v1
+#        id: create_release
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+#        with:
+#          tag_name: ${{ github.ref }}
+#          release_name: ${{ github.ref }}
+#
+#      - name: Create Release
+#        uses: csexton/release-asset-action@v2
+#        with:
+#          github-token: ${{ secrets.TOKEN }}
+#          file: ${{ env.ZIP_PATH }}
+#          release-url: ${{ steps.create_release.outputs.upload_url }}
+#          
