@@ -32,7 +32,7 @@ jobs:
 
       - name: Uploading artifact
         id: upload_artifact
-      - uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3
         with:
           name: "winTouch_${{ env.VERSION }}"
           path: ${{ env.EXE_PATH }}
