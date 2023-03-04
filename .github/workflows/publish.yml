@@ -56,6 +56,9 @@ jobs:
         with:
           name: "winTouch_${{ env.VERSION }}"
 
+      - name: What is going on here?
+        run: ls -la
+
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -67,7 +70,7 @@ jobs:
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
-          files: "**/*.zip"
+          files: "winTouch_${{ env.VERSION }}.zip"
 #
 #      - name: Publish Release Artifact
 #        uses: softprops/action-gh-release@v1
