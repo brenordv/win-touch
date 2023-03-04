@@ -28,7 +28,7 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release
       - name: Publish Project
-        run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --framework net6.0 --runtime win-x86 --self-contained true
+        run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --framework net6.0 --runtime win-x86 --self-contained true /p:PublishSingleFile=true /p:DebugType=None
 
       - name: Uploading artifact
         id: upload_artifact
@@ -36,8 +36,10 @@ jobs:
         with:
           name: "winTouch_${{ env.VERSION }}"
           path: ${{ env.EXE_PATH }}
+          if-no-files-found: error
 
   deploy:
+    needs: build
     permissions:
       deployments: write
       contents: write
