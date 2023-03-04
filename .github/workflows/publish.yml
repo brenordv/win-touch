@@ -11,24 +11,24 @@ env:
   EXE_PATH: ./WTouch.Cli/bin/Release/net6.0/win-x64/publish/touch.exe
 
 jobs:
-  get_version:
+  set_release_version:
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ env.VERSION }}
+#    outputs:
+#      version: ${{ env.VERSION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Get Version
         id: get_version
-        run: echo "VERSION=$(cat WTouch.Cli/WTouch.Cli.csproj | grep -oP '(?<=<AssemblyVersion>).*(?=<\/AssemblyVersion>)')" >> $GITHUB_ENV
+        run: echo "version=$(cat WTouch.Cli/WTouch.Cli.csproj | grep -oP '(?<=<AssemblyVersion>).*(?=<\/AssemblyVersion>)')" >> $GITHUB_OUTPUT
   
   echo_version:
     needs: get_version
     runs-on: ubuntu-latest
     steps:
       - name: Echo Version
-        run: echo ${{ needs.get_version.outputs.version }}
-#        
+        run: echo ${{ needs.set_release_version.outputs.version }}
+
 #  build:
 #    permissions:
 #      deployments: write
