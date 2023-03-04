@@ -67,7 +67,7 @@ jobs:
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
-          files: "*.zip"
+          files: "**/*.zip"
 #
 #      - name: Publish Release Artifact
 #        uses: softprops/action-gh-release@v1
