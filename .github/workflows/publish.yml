@@ -49,6 +49,9 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
+      - name: Where Am I?
+        run: pwd
+
       - name: Downloading artifact
         uses: actions/download-artifact@v3
         with:
