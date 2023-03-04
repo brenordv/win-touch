@@ -5,7 +5,6 @@ on:
       - master
 
 env:
-  VERSION: 1.0.0
   PROJECT_PATH: WTouch.Cli/WTouch.Cli.csproj
   ZIP_PATH: ./WTouch.Cli/bin/Release/net6.0/win-x64/publish/WTouch.Cli.zip
   EXE_PATH: ./WTouch.Cli/bin/Release/net6.0/win-x64/publish/touch.exe
@@ -18,7 +17,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Get Version
+      - name: Define next release version
         id: set_version
         run: echo "version=$(cat WTouch.Cli/WTouch.Cli.csproj | grep -oP '(?<=<AssemblyVersion>).*(?=<\/AssemblyVersion>)')" >> $GITHUB_OUTPUT
   
@@ -29,69 +28,75 @@ jobs:
       - name: Echo Version
         run: echo ${{ needs.set_release_version.outputs.version }}
 
-#  build:
-#    permissions:
-#      deployments: write
-#      contents: write
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#
-#      - name: Setup .NET
-#        uses: actions/setup-dotnet@v3
-#        with:
-#          dotnet-version: '6.0.x'
-#
-#      - name: Build
-#        run: dotnet build --configuration Release
-#
-#      - name: Where Am I?
-#        run: pwd
-#
-#      - name: Publish Project
-#        run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --framework net6.0 --runtime win-x64 --self-contained true /p:PublishSingleFile=true /p:DebugType=None
-#
-#      - name: Compressing artifact
-#        run: zip -j "winTouch_${{ env.VERSION }}.zip" ${{ env.EXE_PATH }} # the -j flag is used to remove the folder structure from the zip file 
-#
-#      - name: What is going on here?
-#        run: ls -la
-#
-#      - name: Uploading artifact
-#        id: upload_artifact
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: "winTouch_${{ env.VERSION }}"
-#          path: "winTouch_${{ env.VERSION }}.zip"
-#          if-no-files-found: error
-#
-#  deploy:
-#    needs: build
-#    permissions:
-#      contents: write
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Where Am I?
-#        run: pwd
-#
-#      - name: Downloading artifact
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: "winTouch_${{ env.VERSION }}"
-#
-#      - name: What is going on here?
-#        run: ls -la
-#
-#      - name: Create Release
-#        id: create_release
-#        uses: softprops/action-gh-release@v1
-#        env:
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          tag_name: ${{ env.VERSION }}
-#          name: ${{ env.VERSION }}
-#          draft: false
-#          prerelease: false
-#          fail_on_unmatched_files: true
-#          files: "winTouch_${{ env.VERSION }}.zip"
+  build:
+    permissions:
+      deployments: write
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          VERSION: ${{ needs.set_release_version.outputs.version }}
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Build
+        run: dotnet build --configuration Release
+
+      - name: Where Am I?
+        run: pwd
+
+      - name: Publish Project
+        run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --framework net6.0 --runtime win-x64 --self-contained true /p:PublishSingleFile=true /p:DebugType=None
+
+      - name: Compressing artifact
+        run: zip -j "winTouch_${{ env.VERSION }}.zip" ${{ env.EXE_PATH }} # the -j flag is used to remove the folder structure from the zip file 
+
+      - name: What is going on here?
+        run: ls -la
+
+      - name: Uploading artifact
+        id: upload_artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: "winTouch_${{ env.VERSION }}"
+          path: "winTouch_${{ env.VERSION }}.zip"
+          if-no-files-found: error
+
+  deploy:
+    needs: build
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          VERSION: ${{ needs.set_release_version.outputs.version }}
+
+      - name: Where Am I?
+        run: pwd
+
+      - name: Downloading artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: "winTouch_${{ env.VERSION }}"
+
+      - name: What is going on here?
+        run: ls -la
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        env:
+          token: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.VERSION }}
+          name: ${{ env.VERSION }}
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          files: "winTouch_${{ env.VERSION }}.zip"
