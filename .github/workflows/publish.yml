@@ -6,7 +6,6 @@ on:
 
 env:
   VERSION: 1.0.0
-  SOLUTION_PATH: WTouch.sln
   PROJECT_PATH: WTouch.Cli/WTouch.Cli.csproj
   ZIP_PATH: ./WTouch.Cli/bin/Release/net6.0/win-x64/publish/WTouch.Cli.zip
   EXE_PATH: ./WTouch.Cli/bin/Release/net6.0/win-x64/publish/touch.exe
@@ -15,12 +14,12 @@ jobs:
   get_version:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.get_version.outputs.version }}
+      version: ${{ env.VERSION }}
     steps:
       - name: Get Version
         id: get_version
-        run: echo "::set-output name=version::$(grep -o '<AssemblyVersion>(.+)<\/AssemblyVersion>' ${{ env.SOLUTION_PATH }})"
-
+        run: echo "VERSION=${grep -oP '(?<=<AssemblyVersion>).*(?=<\/AssemblyVersion>) ${env.PROJECT_PATH}}" >> $GITHUB_ENV
+  
   echo_version:
     needs: get_version
     runs-on: ubuntu-latest
