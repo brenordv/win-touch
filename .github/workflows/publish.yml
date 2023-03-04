@@ -34,12 +34,15 @@ jobs:
       - name: Publish Project
         run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --framework net6.0 --runtime win-x64 --self-contained true /p:PublishSingleFile=true /p:DebugType=None
 
+      - name: Compressing artifact
+        run: zip -j "winTouch_${{ env.VERSION }}.zip" ${{ env.EXE_PATH }} # the -j flag is used to remove the folder structure from the zip file 
+        
       - name: Uploading artifact
         id: upload_artifact
         uses: actions/upload-artifact@v3
         with:
           name: "winTouch_${{ env.VERSION }}"
-          path: ${{ env.EXE_PATH }}
+          path: "winTouch_${{ env.VERSION }}.zip"
           if-no-files-found: error
 
   deploy:
