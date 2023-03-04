@@ -71,7 +71,7 @@ jobs:
           if-no-files-found: error
 
   deploy:
-    needs: build
+    needs: [set_release_version, build]
     permissions:
       contents: write
     runs-on: ubuntu-latest
