@@ -48,8 +48,10 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release
 
-      - name: Where Am I?
-        run: pwd
+      - name: Where Am I? What is going on?
+        run: |
+          echo "$(pwd) | ${{ env.VERSION }}"
+          ls -la
 
       - name: Publish Project
         run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --framework net6.0 --runtime win-x64 --self-contained true /p:PublishSingleFile=true /p:DebugType=None
@@ -76,8 +78,10 @@ jobs:
     env:
       VERSION: ${{ needs.set_release_version.outputs.version }}
     steps:
-      - name: Where Am I?
-        run: pwd
+      - name: Where Am I? What is going on?
+        run: |
+          echo "$(pwd) | ${{ env.VERSION }}"
+          ls -la
 
       - name: Downloading artifact
         uses: actions/download-artifact@v3
