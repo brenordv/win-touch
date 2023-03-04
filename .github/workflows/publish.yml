@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Get Version
         id: get_version
-        run: echo "VERSION=${grep -oP '(?<=<AssemblyVersion>).*(?=<\/AssemblyVersion>) ${env.PROJECT_PATH}}" >> $GITHUB_ENV
+        run: echo "VERSION=$(cat WTouch.Cli/WTouch.Cli.csproj | grep -oP '(?<=<AssemblyVersion>).*(?=<\/AssemblyVersion>)')" >> $GITHUB_ENV
   
   echo_version:
     needs: get_version
