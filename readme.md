@@ -39,3 +39,4 @@ day, hh is the hour, and mm is the minute.
 # Notes
 - Provided AS-IS, no warranty, no support, no nothing. (Well, maybe support if someone opens an issue...)
 - This is a very simple implementation of the touch command. It does not support all the options that the Linux touch command supports.
+- One of the reasons I created this project was to learn how to use Github Actions to create an CI/CD pipeline. So, if you see something that could be done better, please let me know. (I also have more plans for that pipeline, so stay tuned!)
