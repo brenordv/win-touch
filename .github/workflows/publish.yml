@@ -36,7 +36,10 @@ jobs:
 
       - name: Compressing artifact
         run: zip -j "winTouch_${{ env.VERSION }}.zip" ${{ env.EXE_PATH }} # the -j flag is used to remove the folder structure from the zip file 
-        
+
+      - name: What is going on here?
+        run: ls -la
+
       - name: Uploading artifact
         id: upload_artifact
         uses: actions/upload-artifact@v3
@@ -68,17 +71,9 @@ jobs:
         env:
           token: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v1.0.0
-          name: Release v1.0.0
+          tag_name: ${{ env.VERSION }}
+          name: ${{ env.VERSION }}
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
           files: "winTouch_${{ env.VERSION }}.zip"
-#
-#      - name: Publish Release Artifact
-#        uses: softprops/action-gh-release@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          files: "winTouch_${{ env.VERSION }}.zip"
-#          tag_name: v1.0.0
