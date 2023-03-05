@@ -22,7 +22,7 @@ jobs:
       contents: write
     
     env:
-      EXE_PATH: ${{ env.BASE_PUBLISH_PATH }}/${{ env.UBUNTU_PUBLISH_PATH }}
+      EXE_PATH: "${{ env.BASE_PUBLISH_PATH }}/${{ env.UBUNTU_PUBLISH_PATH }}"
       
     steps:
       - name: Checkout
