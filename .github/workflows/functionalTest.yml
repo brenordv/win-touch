@@ -1,0 +1,33 @@
+name: Functional Test Pipeline
+
+on:
+  push:
+    branches: 
+      - master
+  pull_request:
+
+env:
+  EXE_PATH: ./WTouch.Cli/bin/Release/net6.0/win-x64/publish
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Publish Project
+        run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --framework net6.0 --runtime ubuntu-x64 --self-contained true /p:PublishSingleFile=true /p:DebugType=None        
+        
+  test-file-creation:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Change directory
+        run: cd ${{ env.EXE_PATH }}
+
+      - name: Run touch command
+        run: touch.exe test_file.txt
+
+      - name: Check file exists
+        run: test.exe -f test_file.txt
