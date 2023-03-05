@@ -229,6 +229,10 @@ jobs:
       - name: Run touch command
         run: touch test.txt new_test_file.txt
 
+      - name: What's going on?
+        run: |
+          dir
+
       - name: Verify file creation
         run: |
           if (Test-Path new_test_file.txt) {
