@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      EXE_PATH: $BASE_PUBLISH_PATH/$UBUNTU_PUBLISH_PATH
+      EXE_PATH: "$BASE_PUBLISH_PATH/$UBUNTU_PUBLISH_PATH"
 
     permissions:
       contents: write
