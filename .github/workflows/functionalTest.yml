@@ -46,14 +46,14 @@ jobs:
         with:
           name: ${{ env.ARTIFACT_NAME }}
 
+      - name: Making artifact executable
+        run: chmod +x ./winTouch
+
       - name: Where Am I? What is going on?
         run: ls -la
 
-      - name: Making artifact executable
-        run: chmod +x winTouch
-
       - name: Run touch command
-        run: winTouch test_file.txt
+        run: ./winTouch test_file.txt
 
       - name: Check file exists
         run: test -f test_file.txt
