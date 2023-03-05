@@ -8,8 +8,11 @@ on:
 
 env:
   PROJECT_PATH: WTouch.Cli/WTouch.Cli.csproj
-  EXE_PATH: ./WTouch.Cli/bin/Release/net6.0/ubuntu-x64/publish
-  ARTIFACT_NAME: winTouch
+  BASE_PUBLISH_PATH: ./WTouch.Cli/bin/Release/net6.0
+  UBUNTU_PUBLISH_PATH: ubuntu-x64/publish
+  WIN_PUBLISH_PATH: win-x64/publish
+  LINUX_ARTIFACT_NAME: wTouchLinux
+  WIN_ARTIFACT_NAME: wTouchWin
 
 jobs:
   linux-build:
@@ -17,6 +20,9 @@ jobs:
     
     permissions:
       contents: write
+    
+    env:
+        EXE_PATH: ${{ env.BASE_PUBLISH_PATH }}/${{ env.UBUNTU_PUBLISH_PATH }}
       
     steps:
       - name: Checkout
@@ -32,8 +38,33 @@ jobs:
         id: upload_artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.ARTIFACT_NAME }}
+          name: ${{ env.LINUX_ARTIFACT_NAME }}
           path: "${{ env.EXE_PATH }}/winTouch"
+          if-no-files-found: error
+          retention-days: 1
+
+  win-build:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    env:
+      EXE_PATH: ${{ env.BASE_PUBLISH_PATH }}/${{ env.WIN_PUBLISH_PATH }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Publish Ubuntu Project
+        run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --framework net6.0 --runtime win-x64 --self-contained true /p:PublishSingleFile=true /p:DebugType=None
+
+      - name: Uploading artifact
+        id: upload_artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.WIN_ARTIFACT_NAME }}
+          path: "${{ env.EXE_PATH }}/touch.exe"
           if-no-files-found: error
           retention-days: 1
         
@@ -44,7 +75,7 @@ jobs:
       - name: Downloading artifact
         uses: actions/download-artifact@v3
         with:
-          name: ${{ env.ARTIFACT_NAME }}
+          name: ${{ env.LINUX_ARTIFACT_NAME }}
 
       - name: Making artifact executable
         run: chmod +x ./winTouch
@@ -55,9 +86,6 @@ jobs:
       - name: Check file exists
         run: test -f test_file.txt
 
-      - name: Where Am I? What is going on?
-        run: ls -la
-
   linux-test-timestamp-update:
     needs: linux-build
     runs-on: ubuntu-latest
@@ -65,7 +93,7 @@ jobs:
       - name: Downloading artifact
         uses: actions/download-artifact@v3
         with:
-          name: ${{ env.ARTIFACT_NAME }}
+          name: ${{ env.LINUX_ARTIFACT_NAME }}
 
       - name: Making artifact executable
         run: chmod +x ./winTouch
@@ -97,3 +125,67 @@ jobs:
         env:
           INITIAL_TIMESTAMP: ${{ steps.initial-timestamp.outputs.timestamp }}
           UPDATED_TIMESTAMP: ${{ steps.updated-timestamp.outputs.timestamp }}
+
+  linux-test-mixed:
+    needs: linux-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Downloading artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.LINUX_ARTIFACT_NAME }}
+
+      - name: Making artifact executable
+        run: chmod +x ./winTouch
+
+      - name: Create test file
+        run: echo "test content" > test_file.txt
+
+      - name: Get initial timestamp
+        id: initial-timestamp
+        run: echo "::set-output name=timestamp::$(stat -c %y test_file.txt)"
+
+      - name: Update timestamp with touch command
+        run: ./winTouch test_file.txt new_test_file.txt
+
+      - name: Check new file exists
+        run: test -f new_test_file.txt
+
+      - name: Get updated timestamp
+        id: updated-timestamp
+        run: echo "::set-output name=timestamp::$(stat -c %y test_file.txt)"
+
+      - name: Check timestamp updated
+        run: |
+          initial_timestamp=$INITIAL_TIMESTAMP
+          updated_timestamp=$UPDATED_TIMESTAMP
+          if [[ "$initial_timestamp" == "$updated_timestamp" ]]; then
+            echo "Timestamp not updated"
+            exit 1
+          else
+            echo "Timestamp updated"
+          fi
+        env:
+          INITIAL_TIMESTAMP: ${{ steps.initial-timestamp.outputs.timestamp }}
+          UPDATED_TIMESTAMP: ${{ steps.updated-timestamp.outputs.timestamp }}
+
+  win-test-file-creation:
+    needs: win-build
+    runs-on: windows-latest
+    steps:
+      - name: Downloading artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.WIN_ARTIFACT_NAME }}
+
+      - name: Run touch command
+        run: touch.exe test_file.txt
+
+      - name: Verify file creation
+        run: |
+          if (Test-Path test.txt) {
+            echo "File creation test passed"
+          } else {
+            echo "File creation test failed"
+            exit 1
+          }
