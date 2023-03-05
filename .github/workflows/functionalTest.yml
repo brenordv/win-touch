@@ -217,6 +217,8 @@ jobs:
   win-test-mixed:
     needs: win-build
     runs-on: windows-latest
+    env:
+      InitialWriteTime: ""
     steps:
       - name: Downloading artifact
         uses: actions/download-artifact@v3
