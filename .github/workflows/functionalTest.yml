@@ -45,13 +45,13 @@ jobs:
 
   win-build:
     runs-on: ubuntu-latest
-    
+
+    env:
+      EXE_PATH: $BASE_PUBLISH_PATH/$WIN_PUBLISH_PATH
+
     permissions:
       contents: write
-    
-    env:
-      EXE_PATH: ${{ env.BASE_PUBLISH_PATH }}/${{ env.WIN_PUBLISH_PATH }}
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
