@@ -245,6 +245,8 @@ jobs:
       - name: Check file modification time
         run: |
           $currentWriteTime = (Get-Item test.txt).LastWriteTime
+          Write-Host "Initial write time: $initialWriteTime"
+          Write-Host "Current write time: $currentWriteTime"
           if ($initialWriteTime -lt $currentWriteTime) {
             echo "Timestamp update test passed"
           } else {
