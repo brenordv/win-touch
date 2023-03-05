@@ -22,7 +22,6 @@ touch <new-file1> <new-file2> <new-file3> ...
 touch <existing-file1> <existing-file2> <existing-file3> ...
 ```
 
-
 ## Create new file and update timestamp
 
 > This feature is not yet implemented
@@ -36,7 +35,14 @@ The -t option specifies the timestamp in the format YYYYMMDDhhmm, where YYYY is 
 day, hh is the hour, and mm is the minute.
 
 
+# Devops
+I wanted to learn more about Github Workflows and actions, so I created two pipelines: 
+1. [Build and Publish Release](.github/workflows/publish.yml): This pipeline builds the project, generates a zip file, creates a new Release and publishes the zip into that Github release.
+   - TODO on this pipeline: Skip deployment if the release already exists.
+2. [Functional Testing](./.github/workflows/functionalTest.yml): This pipeline runs the functional tests on the current branch for every pull request and (just to double-check) whenever code is pushed to the main branch.
+   - It's worth noting that I test this application in Linux, but just for completeness, because Linux already have the touch command. 
+
+
 # Notes
 - Provided AS-IS, no warranty, no support, no nothing. (Well, maybe support if someone opens an issue...)
 - This is a very simple implementation of the touch command. It does not support all the options that the Linux touch command supports.
-- One of the reasons I created this project was to learn how to use Github Actions to create an CI/CD pipeline. So, if you see something that could be done better, please let me know. (I also have more plans for that pipeline, so stay tuned!)

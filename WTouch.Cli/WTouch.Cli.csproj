@@ -8,8 +8,8 @@
         <AssemblyName>touch</AssemblyName>
         <Company>Raccoon Ninja</Company>
         <Product>Win Touch</Product>
-        <AssemblyVersion>1.0.0</AssemblyVersion>
-        <FileVersion>1.0.0</FileVersion>
+        <AssemblyVersion>1.0.1</AssemblyVersion>
+        <FileVersion>1.0.1</FileVersion>
         <NeutralLanguage>en-US</NeutralLanguage>
     </PropertyGroup>
 
