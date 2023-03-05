@@ -85,7 +85,13 @@ jobs:
 
   linux-test-timestamp-update:
     needs: linux-build
+    
     runs-on: ubuntu-latest
+
+    env:
+      InitialWriteTime: ""
+      UpdatedWriteTime: ""
+
     steps:
       - name: Downloading artifact
         uses: actions/download-artifact@v3
@@ -100,28 +106,29 @@ jobs:
 
       - name: Get initial timestamp
         id: initial-timestamp
-        run: echo "::set-output name=timestamp::$(stat -c %y test_file.txt)"
+        run: |
+          echo "InitialWriteTime=$(stat -c %y test_file.txt)" >> $GITHUB_ENV     
 
       - name: Update timestamp with touch command
         run: ./winTouch test_file.txt
 
       - name: Get updated timestamp
         id: updated-timestamp
-        run: echo "::set-output name=timestamp::$(stat -c %y test_file.txt)"
+        run: |
+          echo "UpdatedWriteTime=$(stat -c %y test_file.txt)" >> $GITHUB_ENV
 
       - name: Check timestamp updated
         run: |
-          initial_timestamp=$INITIAL_TIMESTAMP
-          updated_timestamp=$UPDATED_TIMESTAMP
+          initial_timestamp=$InitialWriteTime
+          updated_timestamp=$UpdatedWriteTime
+          echo "Initial timestamp: $initial_timestamp"
+          echo "Updated timestamp: $updated_timestamp"
           if [[ "$initial_timestamp" == "$updated_timestamp" ]]; then
             echo "Timestamp not updated"
             exit 1
           else
             echo "Timestamp updated"
           fi
-        env:
-          INITIAL_TIMESTAMP: ${{ steps.initial-timestamp.outputs.timestamp }}
-          UPDATED_TIMESTAMP: ${{ steps.updated-timestamp.outputs.timestamp }}
 
   linux-test-mixed:
     needs: linux-build
@@ -164,6 +171,8 @@ jobs:
         run: |
           initial_timestamp=$InitialWriteTime
           updated_timestamp=$UpdatedWriteTime
+          echo "Initial timestamp: $initial_timestamp"
+          echo "Updated timestamp: $updated_timestamp"
           if [[ "$initial_timestamp" == "$updated_timestamp" ]]; then
             echo "Timestamp not updated"
             exit 1
@@ -194,7 +203,13 @@ jobs:
 
   win-test-timestamp-update:
     needs: win-build
-    runs-on: windows-latest
+
+    runs-on: windows-latest    
+    
+    env:
+      InitialWriteTime: ""
+      UpdatedWriteTime: ""
+
     steps:
       - name: Downloading artifact
         uses: actions/download-artifact@v3
@@ -204,15 +219,24 @@ jobs:
       - name: Create test file
         run: echo "test content" > test.txt
 
+      - name: Set initial write time
+        run: |
+          $initialWriteTime = (Get-Item test.txt).LastWriteTime
+          echo "InitialWriteTime=$initialWriteTime" >> $env:GITHUB_ENV
+
       - name: Touch file
         run: touch test.txt
 
+      - name: Set updated write time
+        run: |
+          $updatedWriteTime = (Get-Item test.txt).LastWriteTime
+          echo "UpdatedWriteTime=$updatedWriteTime" >> $env:GITHUB_ENV
+
       - name: Check file modification time
         run: |
-          $filetime = (Get-Item test.txt).LastWriteTime
-          $now = Get-Date
-          $age = $now - $filetime
-          if ($age.TotalSeconds -lt 1) {
+          Write-Host "Initial write time: $env:InitialWriteTime"
+          Write-Host "Current write time: $env:UpdatedWriteTime"
+          if ($env:InitialWriteTime -lt $env:UpdatedWriteTime) {
             echo "Timestamp update test passed"
           } else {
             echo "Timestamp update test failed"
@@ -221,9 +245,13 @@ jobs:
 
   win-test-mixed:
     needs: win-build
+    
     runs-on: windows-latest
+    
     env:
       InitialWriteTime: ""
+      UpdatedWriteTime: ""
+
     steps:
       - name: Downloading artifact
         uses: actions/download-artifact@v3
@@ -241,6 +269,11 @@ jobs:
       - name: Run touch command
         run: touch test.txt new_test_file.txt
 
+      - name: Set updated write time
+        run: |
+          $updatedWriteTime = (Get-Item test.txt).LastWriteTime
+          echo "UpdatedWriteTime=$updatedWriteTime" >> $env:GITHUB_ENV
+
       - name: Verify file creation
         run: |
           if (Test-Path new_test_file.txt) {
@@ -252,10 +285,9 @@ jobs:
 
       - name: Check file modification time
         run: |
-          $currentWriteTime = (Get-Item test.txt).LastWriteTime
           Write-Host "Initial write time: $env:InitialWriteTime"
-          Write-Host "Current write time: $currentWriteTime"
-          if ($env:InitialWriteTime-lt $currentWriteTime) {
+          Write-Host "Current write time: $env:UpdatedWriteTime"
+          if ($env:InitialWriteTime -lt $env:UpdatedWriteTime) {
             echo "Timestamp update test passed"
           } else {
             echo "Timestamp update test failed"
