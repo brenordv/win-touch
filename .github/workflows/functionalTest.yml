@@ -22,15 +22,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Publish Project
+      - name: Publish Ubuntu Project
         run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --framework net6.0 --runtime ubuntu-x64 --self-contained true /p:PublishSingleFile=true /p:DebugType=None
+
+      - name: Renaming artifact
+        run: mv ${{ env.EXE_PATH }}/touch ${{ env.EXE_PATH }}/winTouch
 
       - name: Uploading artifact
         id: upload_artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: "${{ env.EXE_PATH }}/touch.exe"
+          path: "${{ env.EXE_PATH }}/winTouch"
           if-no-files-found: error
           retention-days: 1
         
@@ -44,7 +47,7 @@ jobs:
           name: ${{ env.ARTIFACT_NAME }}
 
       - name: Run touch command
-        run: touch.exe test_file.txt
+        run: winTouch test_file.txt
 
       - name: Check file exists
-        run: test.exe -f test_file.txt
+        run: test -f test_file.txt
