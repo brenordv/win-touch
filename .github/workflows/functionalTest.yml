@@ -12,7 +12,7 @@ env:
   ARTIFACT_NAME: winTouch
 
 jobs:
-  build:
+  linux-build:
     runs-on: ubuntu-latest
     
     permissions:
@@ -37,8 +37,8 @@ jobs:
           if-no-files-found: error
           retention-days: 1
         
-  test-file-creation:
-    needs: build
+  linux-test-file-creation:
+    needs: linux-build
     runs-on: ubuntu-latest
     steps:
       - name: Downloading artifact
@@ -57,3 +57,43 @@ jobs:
 
       - name: Where Am I? What is going on?
         run: ls -la
+
+  linux-test-timestamp-update:
+    needs: linux-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Downloading artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+
+      - name: Making artifact executable
+        run: chmod +x ./winTouch
+
+      - name: Create test file
+        run: echo "test content" > test_file.txt
+
+      - name: Get initial timestamp
+        id: initial-timestamp
+        run: echo "::set-output name=timestamp::$(stat -c %y test_file.txt)"
+
+      - name: Update timestamp with touch command
+        run: ./winTouch test_file.txt
+
+      - name: Get updated timestamp
+        id: updated-timestamp
+        run: echo "::set-output name=timestamp::$(stat -c %y test_file.txt)"
+
+      - name: Check timestamp updated
+        run: |
+          initial_timestamp=$INITIAL_TIMESTAMP
+          updated_timestamp=$UPDATED_TIMESTAMP
+          if [[ "$initial_timestamp" == "$updated_timestamp" ]]; then
+            echo "Timestamp not updated"
+            exit 1
+          else
+            echo "Timestamp updated"
+          fi
+        env:
+          INITIAL_TIMESTAMP: ${{ steps.initial-timestamp.outputs.timestamp }}
+          UPDATED_TIMESTAMP: ${{ steps.updated-timestamp.outputs.timestamp }}
