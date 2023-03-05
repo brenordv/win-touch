@@ -229,7 +229,7 @@ jobs:
       - name: Set initial write time
         run: |
           $initialWriteTime = (Get-Item test.txt).LastWriteTime
-          echo "::set-env name=InitialWriteTime::$initialWriteTime"
+          echo "InitialWriteTime=$initialWriteTime" >> $GITHUB_ENV
         
       - name: Run touch command
         run: touch test.txt new_test_file.txt
