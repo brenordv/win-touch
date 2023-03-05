@@ -231,7 +231,7 @@ jobs:
       - name: Set initial write time
         run: |
           $initialWriteTime = (Get-Item test.txt).LastWriteTime
-          echo "set InitialWriteTime=$initialWriteTime" >> $GITHUB_ENV
+          echo "InitialWriteTime=$initialWriteTime" >> $env:GITHUB_ENV
         
       - name: Run touch command
         run: touch test.txt new_test_file.txt
@@ -247,9 +247,8 @@ jobs:
 
       - name: Check file modification time
         run: |
-          set initialWriteTime=%InitialWriteTime%
+          $initialWriteTime=$env:InitialWriteTime
           $currentWriteTime = (Get-Item test.txt).LastWriteTime
-          echo "Initial write time: %initialWriteTime%"
           Write-Host "Initial write time: $initialWriteTime"
           Write-Host "Current write time: $currentWriteTime"
           if ($initialWriteTime -lt $currentWriteTime) {
