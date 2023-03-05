@@ -8,9 +8,6 @@ on:
 
 env:
   PROJECT_PATH: WTouch.Cli/WTouch.Cli.csproj
-  BASE_PUBLISH_PATH: ./WTouch.Cli/bin/Release/net6.0
-  UBUNTU_PUBLISH_PATH: ubuntu-x64/publish
-  WIN_PUBLISH_PATH: win-x64/publish
   LINUX_ARTIFACT_NAME: wTouchLinux
   WIN_ARTIFACT_NAME: wTouchWin
 
@@ -19,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      EXE_PATH: "$BASE_PUBLISH_PATH/$UBUNTU_PUBLISH_PATH"
+      EXE_PATH: ./WTouch.Cli/bin/Release/net6.0/ubuntu-x64/publish
 
     permissions:
       contents: write
@@ -45,13 +42,13 @@ jobs:
 
   win-build:
     runs-on: ubuntu-latest
-
-    env:
-      EXE_PATH: $BASE_PUBLISH_PATH/$WIN_PUBLISH_PATH
-
+    
     permissions:
       contents: write
-
+    
+    env:
+      EXE_PATH: ./WTouch.Cli/bin/Release/net6.0/win-x64/publish
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v3
