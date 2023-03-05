@@ -180,7 +180,7 @@ jobs:
 
       - name: Verify file creation
         run: |
-          if (Test-Path test.txt) {
+          if (Test-Path test_file.txt) {
             echo "File creation test passed"
           } else {
             echo "File creation test failed"
