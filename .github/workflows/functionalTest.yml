@@ -8,7 +8,7 @@ on:
 
 env:
   PROJECT_PATH: WTouch.Cli/WTouch.Cli.csproj
-  EXE_PATH: ./WTouch.Cli/bin/Release/net6.0/win-x64/publish
+  EXE_PATH: ./WTouch.Cli/bin/Release/net6.0/ubuntu-x64/publish
   ARTIFACT_NAME: winTouch
 
 jobs:
