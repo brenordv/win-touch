@@ -125,7 +125,13 @@ jobs:
 
   linux-test-mixed:
     needs: linux-build
+    
     runs-on: ubuntu-latest
+    
+    env:
+      InitialWriteTime: ""
+      UpdatedWriteTime: ""
+      
     steps:
       - name: Downloading artifact
         uses: actions/download-artifact@v3
@@ -140,7 +146,8 @@ jobs:
 
       - name: Get initial timestamp
         id: initial-timestamp
-        run: echo "::set-output name=timestamp::$(stat -c %y test_file.txt)"
+        run: |
+          echo "InitialWriteTime=$(stat -c %y test_file.txt)" >> $GITHUB_ENV        
 
       - name: Update timestamp with touch command
         run: ./winTouch test_file.txt new_test_file.txt
@@ -150,21 +157,19 @@ jobs:
 
       - name: Get updated timestamp
         id: updated-timestamp
-        run: echo "::set-output name=timestamp::$(stat -c %y test_file.txt)"
+        run: |
+          echo "UpdatedWriteTime=$(stat -c %y test_file.txt)" >> $GITHUB_ENV
 
       - name: Check timestamp updated
         run: |
-          initial_timestamp=$INITIAL_TIMESTAMP
-          updated_timestamp=$UPDATED_TIMESTAMP
+          initial_timestamp=$InitialWriteTime
+          updated_timestamp=$UpdatedWriteTime
           if [[ "$initial_timestamp" == "$updated_timestamp" ]]; then
             echo "Timestamp not updated"
             exit 1
           else
             echo "Timestamp updated"
           fi
-        env:
-          INITIAL_TIMESTAMP: ${{ steps.initial-timestamp.outputs.timestamp }}
-          UPDATED_TIMESTAMP: ${{ steps.updated-timestamp.outputs.timestamp }}
 
   win-test-file-creation:
     needs: win-build
