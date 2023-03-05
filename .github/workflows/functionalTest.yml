@@ -207,6 +207,7 @@ jobs:
           $filetime = (Get-Item test.txt).LastWriteTime
           $now = Get-Date
           $age = $now - $filetime
+          Write-Host $age
           if ($age.TotalSeconds -lt 1) {
             echo "Timestamp update test passed"
           } else {
