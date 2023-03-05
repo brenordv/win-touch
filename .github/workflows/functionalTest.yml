@@ -186,3 +186,66 @@ jobs:
             echo "File creation test failed"
             exit 1
           }
+
+  win-test-timestamp-update:
+    needs: win-build
+    runs-on: windows-latest
+    steps:
+      - name: Downloading artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.WIN_ARTIFACT_NAME }}
+
+      - name: Create test file
+        run: echo "test content" > test.txt
+
+      - name: Touch file
+        run: touch test.txt
+
+      - name: Check file modification time
+        run: |
+          $filetime = (Get-Item test.txt).LastWriteTime
+          $now = Get-Date
+          $age = $now - $filetime
+          if ($age.TotalSeconds -lt 1) {
+            echo "Timestamp update test passed"
+          } else {
+            echo "Timestamp update test failed"
+            exit 1
+          }
+
+  win-test-mixed:
+    needs: win-build
+    runs-on: windows-latest
+    steps:
+      - name: Downloading artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.WIN_ARTIFACT_NAME }}
+
+      - name: Create test file
+        run: echo "test content" > test.txt
+        
+      - name: Run touch command
+        run: touch test.txt new_test_file.txt
+
+      - name: Verify file creation
+        run: |
+          if (Test-Path new_test_file.txt) {
+            echo "File creation test passed"
+          } else {
+            echo "File creation test failed"
+            exit 1
+          }
+
+      - name: Check file modification time
+        run: |
+          $filetime = (Get-Item test.txt).LastWriteTime
+          $now = Get-Date
+          $age = $now - $filetime
+          if ($age.TotalSeconds -lt 1) {
+            echo "Timestamp update test passed"
+          } else {
+            echo "Timestamp update test failed"
+            exit 1
+          }
