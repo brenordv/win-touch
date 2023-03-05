@@ -247,6 +247,7 @@ jobs:
         run: |
           set initialWriteTime=%InitialWriteTime%
           $currentWriteTime = (Get-Item test.txt).LastWriteTime
+          echo "Initial write time: %initialWriteTime%"
           Write-Host "Initial write time: $initialWriteTime"
           Write-Host "Current write time: $currentWriteTime"
           if ($initialWriteTime -lt $currentWriteTime) {
