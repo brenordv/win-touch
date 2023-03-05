@@ -46,6 +46,9 @@ jobs:
         with:
           name: ${{ env.ARTIFACT_NAME }}
 
+      - name: Where Am I? What is going on?
+        run: ls -la
+
       - name: Run touch command
         run: winTouch test_file.txt
 
